@@ -1,55 +1,47 @@
-var express = require('express');
-var User = require('./model/User');
+var express = require("express");
+var User = require("./model/User");
 var app = express();
 var cors = require("cors");
-var bodyParser = require('body-parser');
+var bodyParser = require("body-parser");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors())
 
-
-/* GET users listing. */
-app.get('/getEvents', function (req, res) {
-  User.find({},function (err, users) {
-      if (err) return res.status(500).send("There was a problem finding the database.");
-      res.status(200).send(users);
-      console.log(users,"not found") 
+/* GET EVENTS listing. */
+app.get("/getAllEvents", function(req, res) {
+  User.find({}, function(err, users) {
+    if (err)
+      return res.status(500).send("There was a problem finding the database.");
+    res.status(200).send(users);
+    console.log(users, "not found");
   });
 });
-app.get("/", (req, res, next) => {
-  User.find()
-    .exec()
-    .then(docs => {
-      console.log(docs);
-      res.status(200).json(docs);
-    })
-    .catch(err => {
+
+// Post EVENTS
+app.post("/addEvent", (req, res) => {
+  const newEvent = new User({
+    uid:req.body.uid,
+    title: req.body.title,
+    nameOfExpert:req.body.nameOfExpert,
+    DateOfEvent:req.body.DateOfEvent,
+    TimeOfEvent:req.body.TimeOfEvent,
+    description:req.body.description,
+    location:req.body.location,
+    mobilenumber:req.body.mobilenumber
+  });
+  newEvent.save(err => {
+    if (err) {
       console.log(err);
-      res.status(500).json({
-        error: err
-      });
-    });
+      res.send(err);
+    }
+    res.send("success");
+  });
 });
-// app.get('/get', function (req, res) {
-
-// User.find().toArray((err, items) => {
-//   console.log(items)
-// })
-// })
 
 
 
-// // Delete user
-// app.delete('/:mobile', function (req, res) {
-//   User.findOneAndDelete({mobile:req.params.mobile}, function (err, user) {
-//       if (err) return res.status(500).send({'status':'no user'});
-//       if(!user) return res.status(500).send({'status':'no user'});
-//       console.log(err)
-// res.status(200).send({'status': 'success'});
-//   });
-// });
+app.listen(8000, () => {
+  console.log("server running on 8000");
+});
+module.exports = app;
 
-
-    app.listen(8000, () => {
-      console.log("server running on 8000");
-    });
-    module.exports = app;
