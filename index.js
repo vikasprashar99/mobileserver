@@ -13,7 +13,6 @@ app.get("/getAllEvents", function(req, res) {
     if (err)
       return res.status(500).send("There was a problem finding the database.");
     res.status(200).send(users);
-    console.log(users, "not found");
   });
 });
 
